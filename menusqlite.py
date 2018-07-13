@@ -49,6 +49,7 @@ def select_all_cuisines(conn, cur):
 
 def dish_info(conn, cur, search_info):
 	cur.execute('SELECT dishes.id, dishes.name, cuisines.name, dishes.memo FROM dishes INNER JOIN cuisines ON dishes.cuisine = cuisines.id WHERE dishes.name = \'%s\';' % search_info)
+	#print cur.fetchall()
 	dish_info = cur.fetchall()[0]
 	dish_id = dish_info[0]
 	dish_name = dish_info[1].encode('utf-8')
