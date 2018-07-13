@@ -9,7 +9,7 @@ import utils
 
 def options(conn, cur):
 	print '**************  设置  **************'
-	option = raw_input('* 添加菜名 -------- 输入 【1】\n* 搜索菜名 -------- 输入 【2】\n* 查看整个菜单 ---- 输入 【3】\n* 导入txt文件 ---- 输入【4】')
+	option = raw_input('* 添加菜名 -------- 输入 【1】\n* 搜索菜名 -------- 输入 【2】\n* 查看整个菜单 ---- 输入 【3】\n* 导入txt文件 ----- 输入【4】')
 	if option == '1':
 		add_dish(conn, cur)
 	elif option == '2':
@@ -20,18 +20,20 @@ def options(conn, cur):
 		imp_dishes_list(conn, cur)
 
 
-def add_dish(conn, cur):
-	while 1:
-		new_dish = raw_input('添加新菜名：')
-		if len(new_dish) == 0:
-			print '不要直接回车哦'
-		else:
-			break
+def add_dish(conn, cur, *new_dish):
+	if len(new_dish) == 0:
+		while 1:
+			new_dish = raw_input('添加新菜名：')
+			if len(new_dish) == 0:
+				print '不要直接回车哦'
+			else:
+				break
 	exist_dishes = menusqlite.select_all_dishes(conn, cur)
 	if new_dish in exist_dishes:
 		print '菜单中已存在【' + new_dish + '】。' + '\n'
 	else:
 		#打印所有菜系名字和id
+		new_dish = new_dish[0]
 		id_list = utils.show_cuisines_list(conn, cur)
 		while 1: 
 			cuisine_info = raw_input('请输入需要添加的菜系 id：').strip()
@@ -90,9 +92,8 @@ def search_dish(conn, cur):
 							print '-' + dish			
 					add_op = raw_input('菜单中还没有【' + search_info + '】哦，需要添加的话输入【Y】:')
 					if add_op in ('y', 'Y'):
-						cur.execute('INSERT INTO dishes (name, status) VALUES (\'%s\', 1);' % search_info)
-						conn.commit()
-						print '【' + search_info + '】已添加至菜单。\n'
+						print search_info
+						add_dish(conn, cur, search_info)
 					break
 def show_dishes_list(conn, cur):
 #打印所有菜名
